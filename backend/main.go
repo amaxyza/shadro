@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/amaxyza/shadro/controllers"
+	"github.com/amaxyza/shadro/backend/controllers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,6 +25,10 @@ func main() {
 
 	r.GET("/signup", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "signup.html", nil)
+	})
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
 	r.POST("/login", controllers.PostLoginHandler)

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/amaxyza/shadro/models"
+	"github.com/amaxyza/shadro/backend/models"
 )
 
 var users = models.NewDB()
