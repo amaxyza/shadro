@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/amaxyza/shadro/backend/models"
-	"github.com/amaxyza/shadro/backend/services"
+	"github.com/amaxyza/shadro/models"
+	"github.com/amaxyza/shadro/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,10 +22,11 @@ func PingPongGet(c *gin.Context) {
 func PostLoginHandler(c *gin.Context) {
 	var ru requested_user
 
-	if err := c.BindJSON(&ru); err != nil {
+	if err := c.ShouldBind(&ru); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"status": "unable to serialize form input",
 		})
+		return
 	}
 
 	_, err := services.ValidateUser(ru.Name, ru.Password)
@@ -33,24 +34,28 @@ func PostLoginHandler(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"status": "unable to validate user",
 		})
+		return
 	}
 
 	c.Status(200)
 }
 
 func PostCreateUserHandler(c *gin.Context) {
-	var requested_user requested_user
+	var ru requested_user
 
-	if err := c.BindJSON(&requested_user); err != nil {
+	if err := c.ShouldBind(&ru); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "unable to serialize form input",
 		})
+		return
 	}
-	user, err := services.AddUser(requested_user.Name, requested_user.Password)
+
+	user, err := services.AddUser(ru.Name, ru.Password)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "unable to hash password.",
 		})
+		return
 	}
 
 	c.JSON(http.StatusCreated, models.Publicize(user))

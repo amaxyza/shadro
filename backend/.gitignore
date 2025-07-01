@@ -1,0 +1,15 @@
+# Go build/test artifacts
+*.exe
+*.dll
+*.so
+*.test
+*.out
+*.log
+
+# Test coverage
+*.coverprofile
+coverage.*
+profile.cov
+
+# Env
+.env
