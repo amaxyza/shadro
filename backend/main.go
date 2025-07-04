@@ -14,23 +14,11 @@ func main() {
 	// templates
 	r.LoadHTMLGlob("templates/*")
 
-	// // routes
-	// r.GET("/ping", controllers.PingPongGet)
-
-	// r.GET("/login", func(c *gin.Context) {
-	// 	c.HTML(http.StatusOK, "login.html", nil)
-	// })
-
-	// r.GET("/signup", func(c *gin.Context) {
-	// 	c.HTML(http.StatusOK, "signup.html", nil)
-	// })
-
-	// r.GET("/", func(c *gin.Context) {
-	// 	c.HTML(http.StatusOK, "index.html", nil)
-	// })
-
 	api := r.Group("/api")
 	{
+		api.GET("/users", controllers.GetUsersHandler)
+		api.GET("/users/:id", controllers.GetUserWithID)
+
 		api.POST("/login", controllers.PostLoginHandler)
 		api.POST("/signup", controllers.PostCreateUserHandler)
 	}

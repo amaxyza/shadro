@@ -57,3 +57,14 @@ func GetUserByName(name string) (*models.User, error) {
 
 	return user, nil
 }
+
+func GetUserList() []models.PublicUser {
+	user_list := users.GetUsers()
+	var public_user_list []models.PublicUser
+
+	for _, v := range user_list {
+		public_user_list = append(public_user_list, *models.Publicize(&v))
+	}
+
+	return public_user_list
+}

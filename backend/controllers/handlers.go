@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/amaxyza/shadro/models"
 	"github.com/amaxyza/shadro/services"
@@ -59,4 +60,26 @@ func PostCreateUserHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, models.Publicize(user))
+}
+
+func GetUsersHandler(c *gin.Context) {
+	c.JSON(200, services.GetUserList())
+}
+
+func GetUserWithID(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "unable to convert id to integer",
+		})
+	}
+
+	user, err := services.GetUserByID(id)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "cannot find user with requested id",
+		})
+	}
+
+	c.JSON(200, models.Publicize(user))
 }

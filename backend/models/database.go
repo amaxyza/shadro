@@ -9,6 +9,7 @@ import (
 
 // database storing users, where the key is the username and the value is the user type
 type Database interface {
+	GetUsers() []User
 	GetUserFromID(id int) *User
 	GetUserFromName(name string) *User
 	Add(name string, password_raw string) (*User, error)
@@ -30,6 +31,15 @@ func NewDB() Database {
 		name_to_id: make(map[string]int),
 		next_id:    1,
 	}
+}
+
+func (d *database) GetUsers() []User {
+	var users []User
+	for _, value := range d.db {
+		users = append(users, value)
+	}
+
+	return users
 }
 
 func (d *database) GetUserFromID(id int) *User {
