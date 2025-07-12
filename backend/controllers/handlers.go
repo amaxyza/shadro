@@ -30,9 +30,9 @@ func PostLoginHandler(c *gin.Context) {
 		return
 	}
 
-	_, err := services.ValidateUser(ru.Name, ru.Password)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	v, _ := services.ValidateUser(ru.Name, ru.Password)
+	if !v {
+		c.AbortWithStatusJSON(401, gin.H{
 			"status": "unable to validate user",
 		})
 		return
