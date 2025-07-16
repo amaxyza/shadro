@@ -29,7 +29,10 @@ func main() {
 	{
 		api.GET("/users", controllers.GetUsersHandler)
 		api.GET("/users/:id", controllers.GetUserWithID)
-		//api.GET("/programs")
+
+		api.GET("/programs/:id", controllers.GetProgramHandler)
+		api.DELETE("/programs/:id", controllers.DeleteProgramHandler)
+		api.POST("/programs", controllers.PostProgramHandler)
 
 		api.POST("/login", controllers.PostLoginHandler)
 		api.POST("/signup", controllers.PostCreateUserHandler)

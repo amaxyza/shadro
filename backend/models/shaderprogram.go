@@ -5,51 +5,60 @@ import (
 )
 
 type Shader interface {
-	Name() string
-	Date() time.Time
-	Author_ID() int
-	GLSL() string
+	GetID() int
+	GetOwnerID() int
+	GetName() string
+	GetGLSL() string
+	GetTimeCreated() time.Time
+	GetTimeUpdated() time.Time
 
 	SetName(new_name string)
 	SetProgram(new_src string) error
-	SetAuthor(new_author *User) error
+	SetOwner(new_owner *User) error
 }
 
 type shader struct {
-	name        string    `json:"name"`
-	createdTime time.Time `json:"created"`
-	updatedTime time.Time `json:"updated"`
-	author_id   int       `json:"author_id`
-	glsl        string    `json:"glsl"`
+	id          int
+	owner_id    int
+	name        string
+	glsl        string
+	createdTime time.Time
+	updatedTime time.Time
 }
 
-func CreateShader(name string, author *User, program_src string) (Shader, error) {
+func NewShader(id, owner_id int, name, source string, createdTime, updatedTime time.Time) Shader {
 	return &shader{
+		id:          id,
+		owner_id:    owner_id,
 		name:        name,
-		createdTime: time.Now(),
-		author_id:   author.ID,
-		glsl:        program_src,
-	}, nil
+		glsl:        source,
+		createdTime: createdTime,
+		updatedTime: updatedTime,
+	}
 }
 
-func (s *shader) Name() string {
-	s.updateTime()
+func (s *shader) GetID() int {
+	return s.id
+}
+
+func (s *shader) GetOwnerID() int {
+	return s.owner_id
+}
+
+func (s *shader) GetName() string {
 	return s.name
 }
 
-func (s *shader) Date() time.Time {
-	s.updateTime()
+func (s *shader) GetGLSL() string {
+	return s.glsl
+}
+
+func (s *shader) GetTimeCreated() time.Time {
 	return s.createdTime
 }
 
-func (s *shader) Author_ID() int {
-	s.updateTime()
-	return s.author_id
-}
-
-func (s *shader) GLSL() string {
-	s.updateTime()
-	return s.glsl
+func (s *shader) GetTimeUpdated() time.Time {
+	return s.updatedTime
 }
 
 func (s *shader) SetName(new_name string) {
@@ -63,8 +72,8 @@ func (s *shader) SetProgram(new_src string) error {
 	return nil
 }
 
-func (s *shader) SetAuthor(new_author *User) error {
-	s.author_id = new_author.ID
+func (s *shader) SetOwner(new_owner *User) error {
+	s.owner_id = new_owner.ID
 	s.updateTime()
 	return nil
 }
