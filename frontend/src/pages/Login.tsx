@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom' 
+import { Link, Navigate, useNavigate } from 'react-router-dom' 
 
 const Login: React.FC = () => {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,7 +19,14 @@ const Login: React.FC = () => {
       setError('Login failed.')
     } else {
       // Redirect or handle success
-      console.log('Logged in!')
+      const data = await res.json()
+      if (data.success) {
+        console.log('Logged in!')
+        navigate('/profiles/' + data.id)
+      } else {
+        console.error('failed to convert response to json')
+      }
+      
     }
   }
 

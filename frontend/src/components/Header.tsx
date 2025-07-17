@@ -1,7 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+interface User {
+  id: number;
+  username: string;
+}
+
 const Header: React.FC = () => {
+  const [username, setUsername] = useState<User | null | undefined>(undefined)
+
+  useEffect( () => {
+    const getName = async () => {
+      try {
+        const res = await fetch('/api/me', {credentials: 'include'})
+        if (res.ok) {
+          const data: User = await res.json();
+          setUsername(data);
+        }
+        else {
+          console.log("failed to get login")
+          setUsername(null)
+        }
+
+      } catch (error) {
+        console.log('Error: ', error)
+      }
+    };
+
+    getName();
+  }, [])
+
   return (
     <header style={styles.header}>
       <div style={styles.container}>
@@ -9,9 +37,18 @@ const Header: React.FC = () => {
           <Link style={styles.link} to="/about">About</Link>
           <Link style={styles.link} to ="/create">Create</Link>
         </div>
+        
         <div style={styles.right}>
-          <Link style={styles.link} to="/signup">Signup</Link>
-          <Link style={styles.link} to="/login">Login</Link>
+          {username === undefined ? (
+            null
+          ) : username ? (
+            <Link style={styles.link} to={"/profiles/" + username.id}>Hello, {username.username}!</Link>
+          ) : (
+            <>
+              <Link style={styles.link} to="/signup">Signup</Link>
+              <Link style={styles.link} to="/login">Login</Link>
+            </>
+          )}
         </div>
       </div>
     </header>

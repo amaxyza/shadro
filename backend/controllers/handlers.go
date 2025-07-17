@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -20,6 +21,35 @@ func PingPongGet(c *gin.Context) {
 	})
 }
 
+func LogoutHandler(c *gin.Context) {
+	//Overwrite current cookie with bad one
+	c.SetCookie("token", "", -1, "/", "", true, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
+}
+
+func GetMeHandler(c *gin.Context) {
+	token, err := c.Cookie("token")
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "missing jwt or cookie",
+		})
+		return
+	}
+
+	username, id, err := services.VerifyToken(token)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "invalid token",
+		})
+		return
+	}
+
+	fmt.Println("DEBUG: printing user with name - " + username)
+
+	c.JSON(200, gin.H{"username": username, "id": id})
+}
+
 func PostLoginHandler(c *gin.Context) {
 	var ru requested_user
 
@@ -30,15 +60,26 @@ func PostLoginHandler(c *gin.Context) {
 		return
 	}
 
-	v, _ := services.ValidateUser(ru.Name, ru.Password)
-	if !v {
+	id, err := services.ValidateUser(ru.Name, ru.Password)
+	if err != nil {
 		c.AbortWithStatusJSON(401, gin.H{
 			"status": "unable to validate user",
 		})
 		return
 	}
 
-	c.Status(200)
+	// Create token and set cookie
+	token_str, err := services.CreateToken(id, ru.Name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{
+			"status": err.Error(),
+		})
+		return
+	}
+
+	c.SetCookie("token", token_str, 3600*24*30, "/", "", true, true)
+
+	c.JSON(200, gin.H{"success": true, "id": id})
 }
 
 func PostCreateUserHandler(c *gin.Context) {
@@ -54,7 +95,7 @@ func PostCreateUserHandler(c *gin.Context) {
 	user, err := services.AddUser(ru.Name, ru.Password)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "unable to hash password.",
+			"error": err.Error(),
 		})
 		return
 	}

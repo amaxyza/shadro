@@ -6,10 +6,17 @@ import (
 	"github.com/amaxyza/shadro/controllers"
 	"github.com/amaxyza/shadro/services"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := services.Connect()
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Errorf("couldn't load .env")
+		return
+	}
+
+	err = services.Connect()
 	defer services.ClosePool()
 
 	if err != nil {
@@ -27,6 +34,9 @@ func main() {
 
 	api := r.Group("/api")
 	{
+		api.GET("/logout", controllers.LogoutHandler)
+		//api.POST("/logout", controllers.LogoutHandler)
+		api.GET("/me", controllers.GetMeHandler)
 		api.GET("/users", controllers.GetUsersHandler)
 		api.GET("/users/:id", controllers.GetUserWithID)
 

@@ -10,19 +10,13 @@ import (
 	"github.com/amaxyza/shadro/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var pool *pgxpool.Pool
 
 func Connect() error {
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Println("Error loading .env file.")
-		return err
-	}
-
+	var err error
 	pool, err = pgxpool.New(context.Background(), os.Getenv("PSQL_EXTERNAL_CONNECT"))
 	if err != nil {
 		fmt.Errorf("error creating db pool")
@@ -100,20 +94,23 @@ func DeleteUserByID(id int) error {
 	return nil
 }
 
-func ValidateUser(name string, password string) (bool, error) {
+// if validated, returns the id of the user
+func ValidateUser(name string, password string) (int, error) {
 	var hashed string
+	var id int
 
 	pool.QueryRow(
 		context.Background(),
-		`SELECT password FROM "user" WHERE name = @username`,
+		`SELECT id, password FROM "user" WHERE name = @username`,
 		pgx.NamedArgs{"username": name},
-	).Scan(&hashed)
+	).Scan(&id, &hashed)
 	fmt.Println("Hashed password in db: ", hashed)
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password))
 	if err != nil {
-		return false, err
+		return -1, err
 	}
-	return true, nil
+
+	return id, nil
 }
 
 func GetUserByID(id int) (*models.User, error) {
