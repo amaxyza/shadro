@@ -37,8 +37,10 @@ func main() {
 		api.GET("/logout", controllers.LogoutHandler)
 		//api.POST("/logout", controllers.LogoutHandler)
 		api.GET("/me", controllers.GetMeHandler)
-		api.GET("/users", controllers.GetUsersHandler)
+
+		api.GET("/users/:id/programs", controllers.GetAllUserProgramsHandler)
 		api.GET("/users/:id", controllers.GetUserWithID)
+		api.GET("/users", controllers.GetUsersHandler)
 
 		api.GET("/programs/:id", controllers.GetProgramHandler)
 		api.DELETE("/programs/:id", controllers.DeleteProgramHandler)
