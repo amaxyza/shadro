@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
-            <Route path='/create' element={<Create />} />
+            <Route path='/create/:id?' element={<Create />} />
             <Route path='/about' element={<Home />} />
             <Route path="/profiles/:id" element={<ProfilePage />} />
 
