@@ -13,6 +13,12 @@ api.GET("/programs/:id", controllers.GetProgramHandler)
 api.DELETE("/programs/:id", controllers.DeleteProgramHandler)
 api.POST("/programs", controllers.PostProgramHandler)
 */
+type programInput struct {
+	Owner_ID     int    `json:"owner_id"`
+	Program_Name string `json:"program_name`
+	Source       string `json:"source"`
+}
+
 type glslProgram struct {
 	ID       int       `json:"id"`
 	Owner_id int       `json:"owner_id"`
@@ -22,6 +28,28 @@ type glslProgram struct {
 	Updated  time.Time `json:"updated"`
 }
 
+// TODO: Fix programs in response JSON being empty.
+func GetAllUserProgramsHandler(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.AbortWithStatusJSON(
+			400, gin.H{"error": "unable to convert id to integer"},
+		)
+		return
+	}
+
+	programs, err := services.GetAllUserPrograms(id)
+
+	if err != nil {
+		c.AbortWithStatusJSON(
+			400, gin.H{"error": "unable to create program list of user with id " + string(id)},
+		)
+		return
+	}
+
+	c.JSON(200, programs)
+}
 func GetProgramHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
@@ -72,18 +100,23 @@ func DeleteProgramHandler(c *gin.Context) {
 }
 
 func PostProgramHandler(c *gin.Context) {
-	c.Status(200)
-	// var gp glslProgram
-	// if err := c.ShouldBind(&gp); err != nil {
-	// 	c.AbortWithStatusJSON(
-	// 		400, gin.H{"error": "program doesnt exist."},
-	// 	)
-	// 	return
-	// }
+	var programInput programInput
 
-	// services.CreateProgram(models.User {
-	// 	ID: 3,
-	// 	Name: "amax",
-	// 	Password_Hash: "xd",
-	// }, gp.Name, )
+	if err := c.ShouldBind(&programInput); err != nil {
+		c.AbortWithStatusJSON(400, gin.H{"status": "unable to bind data to expected input"})
+		return
+	}
+
+	shaderprogram, err := services.CreateProgram(
+		programInput.Owner_ID,
+		programInput.Program_Name,
+		programInput.Source,
+	)
+
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"status": err.Error()})
+		return
+	}
+
+	c.JSON(201, shaderprogram)
 }
