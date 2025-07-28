@@ -6,17 +6,19 @@ import (
 	"github.com/amaxyza/shadro/controllers"
 	"github.com/amaxyza/shadro/services"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		fmt.Errorf("couldn't load .env")
-		return
-	}
+	fmt.Println("Getting environment variables...")
+	// err := godotenv.Load(".Senv")
+	// if err != nil {
+	// 	fmt.Errorf("couldn't load .env")
+	// 	return
+	// }
 
-	err = services.Connect()
+	fmt.Println("Connecting to PostgreSQL db...")
+
+	err := services.Connect()
 	defer services.ClosePool()
 
 	if err != nil {
@@ -24,6 +26,7 @@ func main() {
 		return
 	}
 
+	fmt.Println("Creating webserver...")
 	r := gin.Default()
 
 	// static files served under /static/*

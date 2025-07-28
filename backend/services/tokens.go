@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 )
 
 func CreateToken(id int, username string) (string, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		return "", err
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
@@ -33,10 +32,10 @@ func CreateToken(id int, username string) (string, error) {
 }
 
 func VerifyToken(jwt_str string) (string, int, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		return "", -1, err
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	return "", -1, err
+	// }
 
 	token, err := jwt.Parse(
 		jwt_str,
