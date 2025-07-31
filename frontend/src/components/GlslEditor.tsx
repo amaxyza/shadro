@@ -34,18 +34,17 @@ const downloadShader = (name: string, code: string) => {
   URL.revokeObjectURL(url);
 }
 
-const GlslEditor = ( {program_id = -1}) => {
-  const [shaderCode, setShaderCode] = useState(`void mainImage( out vec4 fragColor, in vec2 fragCoord )
-{
-    // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = fragCoord/iResolution.xy;
+interface GlslEditorProps {
+  program_id?: number;
+  code?: string;
+  onChange: (value: string) => void;
+}
 
-    // Time varying pixel color
-    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
-
-    // Output to screen
-    fragColor = vec4(col,1.0);
-}`);
+const GlslEditor = ( {program_id = -1, code = `void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+    vec2 uv = fragCoord / iResolution.xy;
+    fragColor = vec4(uv, 0.5 + 0.5 * sin(iTime), 1.0);
+}`, onChange}: GlslEditorProps ) => {
+  const [shaderCode, setShaderCode] = useState(code);
 
   const [showModal, setShowModal] = useState(false);
   const [programName, setProgramName] = useState('');
@@ -73,13 +72,11 @@ const GlslEditor = ( {program_id = -1}) => {
 
   return (
     <>
-      <div className="editor-buttons">
-        <p className="editor-text">{finalName}</p>
-        <button className="editor-button" onClick= {() => {downloadShader(finalName, shaderCode)}}>Download</button>
-        <button className="editor-button" onClick= {() => { setShowModal(true)}}>Save</button>
-        <button className="editor-button run">Run</button>
-      </div>
-      <div className="editor-layout">
+      
+      <div className="editor-layout" style={{ marginTop: "0%" }}>
+        <div className="program-name">
+          <h2>{finalName || "Untitled Shader"}</h2>
+        </div>
         <CodeMirror
           value={shaderCode} 
           height="75vh"
@@ -88,7 +85,7 @@ const GlslEditor = ( {program_id = -1}) => {
           extensions={
               [cpp()]
           }
-          onChange={(value: string, viewUpdate: ViewUpdate) => { setShaderCode(value)}}
+          onChange={(value: string, viewUpdate: ViewUpdate) => { onChange(value) }}
         />
       </div>
 
