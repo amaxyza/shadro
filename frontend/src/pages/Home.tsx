@@ -1,18 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
+import BackgroundShader from '../components/BackgroundShader'
 
 const Home: React.FC = () => {
   return (
     <>
       <Header />
+      <BackgroundShader />
       <div style={styles.container}>
         <h1>Welcome to Shadro</h1>
         <p style={styles.subtext}>A place to share and explore GLSL shaders.</p>
-        {/* <div style={styles.links}>
-          <Link to="/login" style={styles.linkButton}>Login</Link>
-          <Link to="/signup" style={styles.linkButton}>Sign Up</Link>
-        </div> */}
       </div>
     </>
   )
