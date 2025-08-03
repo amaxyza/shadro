@@ -22,7 +22,7 @@ func main() {
 	defer services.ClosePool()
 
 	if err != nil {
-		fmt.Errorf("couldn't connect to postgresql renderer db")
+		fmt.Println("couldn't connect to postgresql renderer db")
 		return
 	}
 

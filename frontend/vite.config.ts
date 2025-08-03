@@ -1,12 +1,17 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig, loadEnv } from 'vite';
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server : {
-    proxy: {
-        '/api':'http://localhost:8081',
-    }
-  }
-})
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+
+  return {
+    server: {
+      proxy: {
+        '/api': {
+          target: env.VITE_BACKEND_URL_PORT, // Still use env here
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+    },
+  };
+});
