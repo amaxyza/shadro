@@ -14,14 +14,14 @@ const Create: React.FC = () => {
     const [programName, setProgramName] = useState("Untitled Shader");
 
     const saveShader = async (name: string) => {
-    const meRes = await fetch("/api/me", { credentials: "include" });
-    if (!meRes.ok) return console.error("login check failed");
-    const user = await meRes.json();
+      const meRes = await fetch("/api/me", { credentials: "include" });
+      if (!meRes.ok) return console.error("login check failed");
+      const user = await meRes.json();
 
-    const body = {
-      owner_id: user.id,
-      program_name: name,
-      source: code,
+      const body = {
+        owner_id: user.id,
+        program_name: name,
+        source: code,
     };
 
     const postRes = await fetch("/api/programs", {
@@ -40,7 +40,7 @@ const Create: React.FC = () => {
             <Header />
             <EditorToolbar code={code} setProgramName={setProgramName} saveShader={saveShader} />
             <div style={{ display: "flex", height: "100vh" }}>
-                <GlslEditor program_id={id ? parseInt(id, 10) : undefined} code={code} onChange={setCode} />
+                <GlslEditor program_id={id ? parseInt(id, 10) : undefined} code={code} onChange={setCode} programName={programName} />
                 <ShaderPreview source={code} />
             </div>
         </>

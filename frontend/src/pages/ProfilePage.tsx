@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import { useParams } from 'react-router-dom'
 import './ProfilePage.css'
@@ -13,7 +12,7 @@ interface User {
 const ProfilePage: React.FC = () => {
     const params = useParams()
     const [user, setUser] = useState<User | null>(null);
-    const shaders = [] // future shader preview list
+    //const shaders = [] // future shader preview list
 
     useEffect( () => {
         const getUser = async () => {

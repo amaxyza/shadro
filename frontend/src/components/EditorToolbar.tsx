@@ -31,9 +31,7 @@ export default function EditorToolbar({
       <div className="toolbar">
         <button onClick={() => downloadShader(tempName, code)}>Download</button>
         <button onClick={() => setShowModal(true)}>Save</button>
-        <button onClick={() => null}>
-          Run
-        </button>
+        <button onClick={() => null}>Run</button>
       </div>
 
       {showModal && (
